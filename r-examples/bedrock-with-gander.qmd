@@ -4,7 +4,10 @@ format: html
 editor: visual
 ---
 
-This document outlines how to use the `gander` R package connected to AWS Bedrock for natural language driven EDA within RStudio on SageMaker. Gander is an R package that supports interacting with a variety of LLM backends via the `ellmer` package.
+This document outlines how to use the `gander` R package connected to AWS
+Bedrock for natural language driven EDA within RStudio on SageMaker. Gander is
+an R package that supports interacting with a variety of LLM backends via the
+`ellmer` package.
 
 ## Setup
 Load the required packages:
@@ -23,24 +26,34 @@ available_models <- svc$list_foundation_models()[[1]] |>
 available_models
 ```
 
-Given the list of models, let's confirm that we can interact with Claude 3.7 Sonnet via Bedrock by using the `ellmer` package:
+Given the list of models, let's confirm that we can interact with Claude 3.7
+Sonnet via Bedrock by using the `ellmer` package:
 ```{r}
 chat <- chat_bedrock(model = "us.anthropic.claude-3-7-sonnet-20250219-v1:0")
 chat$chat("who are you?")
 ```
-Success! We have connected to Claude in Bedrock directly from RStudio on SageMaker! We didn't have to provide any credentials or authentication details because the instance profile of the RStudio session is used to provide access.
+Success! We have connected to Claude in Bedrock directly from RStudio on
+SageMaker! We didn't have to provide any credentials or authentication details
+because the instance profile of the RStudio session is used to provide access.
 
-The next step is to configure gander to use this Claude model. This option can be set automatically by including it as part of a `.Rprofile`, but here it is done interactively:
+The next step is to configure gander to use this Claude model. This option can
+be set automatically by including it as part of a `.Rprofile`, but here it is
+done interactively:
 ```{r}
 options(.gander_chat = ellmer::chat_bedrock(model = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"))
 ```
 
-Gander provides a chat interface for code generation. We'll use this code generation to help us explore the `diamonds` dataset included in the `ggplot2` package:
+Gander provides a chat interface for code generation. We'll use this code
+generation to help us explore the `diamonds` dataset included in the `ggplot2`
+package:
 ```{r}
 data(diamonds)
 glimpse(diamonds)
 ```
-Gander can be accessed via the "Addins" menu in RStudio or a keyboard shortcut can be defined. Once accessed, a prompt opens where you can submit natural language commands and receive R code as a response. For example, copy the following into the gander prompt:
+Gander can be accessed via the "Addins" menu in RStudio or a keyboard shortcut
+can be defined. Once accessed, a prompt opens where you can submit natural
+language commands and receive R code as a response. For example, copy the
+following into the gander prompt:
 Create a plot showing price on the y axis and carat on the x axis
 ```{r}
 ggplot(diamonds, aes(x = carat, y = price)) +
@@ -50,7 +63,9 @@ ggplot(diamonds, aes(x = carat, y = price)) +
        y = "Price (USD)") +
   theme_minimal()
 ```
-By selecting the generated R code, we can now further iterate on this by asking for additional modifications to the generated plot. For example, we can add a smoothed trend line and color the points by cut:
+By selecting the generated R code, we can now further iterate on this by asking
+for additional modifications to the generated plot. For example, we can add a
+smoothed trend line and color the points by cut:
 ```{r}
 ggplot(diamonds, aes(x = carat, y = price, color = cut)) +
   geom_point(alpha = 0.3) +
